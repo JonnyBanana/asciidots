@@ -1,6 +1,6 @@
 [Back to docs home](../index.md)
 
-# External ressources
+# External resources
 
 
 ### Projects built for AsciiDots:
