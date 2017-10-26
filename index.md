@@ -2,7 +2,7 @@
 
 You can find here resources about:
 - The [language](docs/language.md) itself
-- All [librairies](docs/libs/index.md)
+- All [libraries](docs/libs/index.md)
 - The [interpreter](docs/interpreter.md)
 - [External resources](docs/resources.md) to improve your Asciidot-ing experience
 
