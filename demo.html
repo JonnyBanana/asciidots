@@ -6,68 +6,9 @@
     <meta name="viewport" content="width=device-width">
     <title>AsciiDots Online Interpreter</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
     <meta name="author" content="Aaron Janse">
-
-    <style>
-        #txtarea {
-            height: 225px;
-        }
-
-        #out {
-            height: 180px;
-        }
-
-        #debug_output {
-            max-height: none;
-            color: #fff;
-        }
-
-        #out, #debug_output {
-            white-space: pre;
-        }
-
-        #txtarea, #out, #debug_output {
-            font-family: monospace;
-        }
-
-        body {
-            margin: 20px;
-        }
-
-        h1,
-        button {
-            display: inline;
-            vertical-align: middle;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            margin-bottom: 1/20px;
-        }
-
-        button {
-            margin-left: 30px;
-            margin-bottom: 10px;
-            margin-top: 12px;
-        }
-
-        #dropdowndiv{
-          width: 250px;
-
-          margin-top: 20px;
-          margin-bottom: 20px;
-        }
-
-        #dropdowndiv button {
-          margin: 0;
-        }
-    </style>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
@@ -80,17 +21,10 @@
         <div class="input-group-btn">
           <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
             <span class="caret"></span>
-    </button>
-    <ul id="demolist" class="dropdown-menu">
-        <li><a>Hello World</a></li>
-        <li><a>Hello World 2</a></li>
-        <li><a>Counter</a></li>
-        <li><a>Fibonacci</a></li>
-        <li><a>Factorial</a></li>
-        <li><a>Factor</a></li>
-    </ul>
-    </div>
-    </div>
+          </button>
+          <ul id="demolist" class="dropdown-menu"></ul>
+        </div>
+      </div>
     </span>
     <div class="form-group" id="txtgroup">
         <textarea class="form-control" placeholder='.-$"Hello, world!"' id="txtarea">.-$'Hello, World!'</textarea>
@@ -102,179 +36,16 @@
 
     Read about AsciiDots <a href="https://github.com/aaronduino/asciidots">on github</a>
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="jquery.min.js">\x3C/script>')
+    </script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="ansi_up.js" type="text/javascript"></script>
-
-    <script>
-        var params = {};
-
-        if (location.search) {
-            var parts = location.search.substring(1).split('&');
-
-            for (var i = 0; i < parts.length; i++) {
-                var nv = parts[i].split('=');
-                if (!nv[0]) continue;
-                params[nv[0]] = nv[1] || true;
-            }
-        }
-
-        var default_code = encodeURIComponent('.-$"Hello, World!"')
-        params.code = decodeURIComponent(params.code || default_code)
-
-        document.getElementById('txtarea').value = params.code
-    </script>
-
-    <script>
-        open = false
-
-        var websocket_url = ''
-        if (location.protocol == 'https:') {
-          websocket_url = 'wss://'
-        } else {
-          websocket_url = 'ws://'
-        }
-
-        websocket_url += 'asciidots-demo-backend.herokuapp.com'
-
-        var socket = new WebSocket(websocket_url)
-
-        hasSend = false
-
-        socket.onopen = function() {
-            open = true
-
-            setInterval(function() {
-                socket.send('update;');
-            }, 50);
-        };
-
-        var ansi_up = new AnsiUp;
-        socket.onmessage = function handle_message(s) {
-            if (!hasSend) {
-                document.getElementById("out").innerHTML = ""
-                hasSend = true
-            }
-
-            pieces = s.data.split(';')
-
-            if (pieces[0] == 'out') {
-              var sections = s.data.split('\n;start_debug;')
-
-              var first_section = sections.shift()
-
-              s.data = first_section
-
-              // Debug data
-              var debug_txt = s.data.split(';start_debug;')[1].split(';end_debug')[0]
-              var html = ansi_up.ansi_to_html(debug_txt);
-
-              document.getElementById('debug_output').innerHTML = html
-
-              // Program output
-              var out_text = s.data.split(';start_debug;')[1].split(';end_debug;')[1]
-              out_text = out_text.replace('\n', '')
-              document.getElementById("out").textContent += out_text
-
-              document.getElementById("out").scrollTop = document.getElementById("out").scrollHeight;
-
-              if (sections.length > 0) {
-                var call_text = 'out;;start_debug;'+sections.join('\n;start_debug;')
-                handle_message({data: call_text})
-              }
-            } else if (pieces[0] == 'input') {
-              socket.send(prompt('Please input a value: '));
-            } else {
-              document.getElementById("out").textContent += s.data
-
-              document.getElementById("out").scrollTop = document.getElementById("out").scrollHeight;
-            }
-        };
-
-        function run() {
-            // update url for sharing
-
-            if (open) {
-                arg = document.getElementById("txtarea").value
-                socket.send('run;' + arg);
-
-
-                history.pushState(null, null, '?code='+encodeURIComponent(arg));
-            } else {
-                document.getElementById("out").innerHTML = "Not connected...\nThe backend may not have booted up. Please wait ~5 seconds and reload."
-            }
-        }
-
-        function stop() {
-            if (open) {
-                socket.send('stop;');
-            } else {
-                document.getElementById("out").innerHTML = "Not connected..."
-            }
-        }
-
-        $(document).on('click', '.dropdown-menu li a', function() {
-            val = $(this).html()
-
-            $('#selectedbox').val(val)
-
-            if (val == 'Hello World') {
-              document.getElementById("txtarea").value = `.-$'Hello, World!'`
-            } else if (val == 'Hello World 2') {
-              document.getElementById("txtarea").value = `.-($'Hello, World!'$)`
-            } else if (val == 'Counter') {
-              document.getElementById("txtarea").value =
-`    /1#-.
-    |
-  /-+-$#\\
-  | |   |
- [+]<1#-*
-  |     |
-  \\--<--/
-     |
-     0
-     #
-     |
-     .
-              `
-            } else if (val == 'Fibonacci') {
-              document.getElementById("txtarea").value =
-`/--#$--\\
-|      |
->-*>{+}/
-| \\+-/
-1  |
-#  1
-|  #
-|  |
-.  .
-              `
-            } else if (val == 'Factorial') {
-              document.getElementById("txtarea").value =
-` /---------*--~-$#-&
- | /--;---\\| [!]-\\
- | *------++--*#1/
- | | /1#\\ ||
-[*]*{-}-*~<+*?#-.
- *-------+-</
- \\-#0----/
-              `
-            } else if (val == 'Factor') {
-              document.getElementById("txtarea").value =
-`%!for_in_range.dots f
-
-/.
-#
-?/\\ #$~\\
-*~*{%}//
-|\\1#*-*
-| .-#1f\\
-*--{^}+/&#$~\\
-*-#2\\-\\#0*~//
-*#1{/}/  \\//
-\\---------/
-              `
-            }
-        });
-    </script>
+    <script src="url_encoding.js"></script>
+    <script src="examples.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>
