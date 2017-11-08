@@ -1,10 +1,10 @@
 ## Using the Interpreter
-The interpreter for this language is the `__main__.py` file. It requires Python 3, and can be run from the terminal using the `python3` command. The first argument is the `dots` file that you wish the interpreter to run.
+The first argument of the interpreter script is the `dots` file that you wish to run.
 
 Here's an example of running the counter sample program (the working directory is the dots repo folder):
 
 ```bash
-$ python3 __main__.py ./samples/counter.dots
+$ asciidots samples/counter.dots
 ```
 
 Here is the list of available flags:
@@ -29,7 +29,7 @@ Some extra flags when debugging:
 This is how one might debug a program for 300 ticks while running it automatically with a delay of 0.05 seconds:
 
 ```bash
-$ python3 __main__.py ./samples/counter.dots -t 300 -d -a 0.05
+$ asciidots samples/counter.dots -t 300 -d -a 0.05
 ```
 
 ---
