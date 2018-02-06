@@ -199,7 +199,8 @@ $ asciidots samples/counter.dots -t 300 -d -a 0.05
 Interpretation of a dots program ends when a dot passes over an `&`. It also ends when all dots die (i.e. they all pass over the end of a path into nothingness)
 
 ### Comments
-Everything after ` `` ` (two back ticks) is a comment and is ignored by the interpreter
+Everything after ` `` ` (two back ticks) is a comment and is ignored by the interpreter.  
+Everything between two backticks is considered an inline comment. Note that two consecutive backticks comments out the rest of the line, as stated above.
 
 ### Paths
 `|` (vertical pipe symbol) is a vertical path that dots travel along<br>
